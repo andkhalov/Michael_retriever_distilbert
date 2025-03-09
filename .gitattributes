@@ -1,0 +1,2 @@
+backend/michael_scott_model.bin filter=lfs diff=lfs merge=lfs -text
+backend/responces_base.pkl filter=lfs diff=lfs merge=lfs -text

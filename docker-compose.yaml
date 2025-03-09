@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  backend:
+    build: ./backend
+    container_name: michael_scott_backend
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./backend:/app
+  frontend:
+    build: ./frontend
+    container_name: michael_scott_frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html

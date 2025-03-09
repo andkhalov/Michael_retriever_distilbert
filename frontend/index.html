@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Michael Scott Retriever Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .chat-container { max-width: 800px; margin: 20px auto; border: 1px solid #ccc; padding: 10px; }
+        .chat-history { height: 400px; overflow-y: scroll; border: 1px solid #eee; padding: 10px; }
+        .chat-input { margin-top: 10px; }
+        .message { margin-bottom: 10px; }
+        .user { color: blue; }
+        .michael { color: green; }
+    </style>
+</head>
+<body>
+<div class="chat-container">
+    <h2>Michael Scott Retriever Chat</h2>
+    <h3>Retriever working on distil-bert simpple cosini-similarity search engine and the corpus of the Michaels speech in "The Office" series</h3>
+    <div class="chat-history" id="chatHistory"></div>
+    <div class="chat-input">
+        <input type="text" id="queryInput" placeholder="Question to Michael" style="width: 80%;">
+        <button onclick="sendQuery()">Send</button>
+    </div>
+</div>
+
+<script>
+    const backendUrl = "http://localhost:5001/api/chat";  // URL backend API
+
+    function appendMessage(sender, text) {
+        const chatHistory = document.getElementById("chatHistory");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "message " + (sender === "User" ? "user" : "michael");
+        messageDiv.textContent = sender + ": " + text;
+        chatHistory.appendChild(messageDiv);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+
+    function sendQuery() {
+        const input = document.getElementById("queryInput");
+        const query = input.value.trim();
+        if (!query) return;
+        appendMessage("User", query);
+        input.value = "";
+        fetch(backendUrl, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ query: query })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.response) {
+                appendMessage("Michael", data.response);
+            } else if (data.error) {
+                appendMessage("Michael", "Error: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            appendMessage("Michael", "Error communicating with server.");
+        });
+    }
+</script>
+</body>
+</html>
